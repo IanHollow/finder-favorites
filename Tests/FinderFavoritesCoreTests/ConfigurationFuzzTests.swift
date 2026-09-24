@@ -8,7 +8,12 @@ final class ConfigurationFuzzTests: XCTestCase {
     let seeds = [
       #"{"schemaVersion":1,"placement":"bottom","entries":[]}"#,
       #"{"schemaVersion":1,"placement":"top","entries":[{"id":"a","label":"A","path":"/tmp/a","onMissing":"skip"}]}"#,
-      #"{"schemaVersion":1,"placement":"bottom","entries":[{"id":"a","label":"A","path":"/tmp/a","onMissing":"error"},{"id":"b","label":"B","path":"/tmp/b","onMissing":"createDirectory"}]}"#,
+      #"""
+      {"schemaVersion":1,"placement":"bottom","entries":[
+        {"id":"a","label":"A","path":"/tmp/a","onMissing":"error"},
+        {"id":"b","label":"B","path":"/tmp/b","onMissing":"createDirectory"}
+      ]}
+      """#,
       #"{"schemaVersion":2,"placement":"bottom","entries":[]}"#,
       #"{"schemaVersion":1,"placement":"bottom","entries":[],"unknown":true}"#,
       "",
