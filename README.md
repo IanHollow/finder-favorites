@@ -1,8 +1,60 @@
 # finder-favorites
 
-`finder-favorites` is an arm64-native command-line tool for declaring and
-reconciling the macOS Finder Favorites sidebar. It is designed for Home
-Manager, but its JSON interface is independent of Nix.
+[![OpenSSF Baseline: not assessed](https://img.shields.io/badge/OpenSSF%20Baseline-not%20assessed-lightgrey)](https://baseline.openssf.org/)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IanHollow/finder-favorites/badge)](https://scorecard.dev/viewer/?uri=github.com/IanHollow/finder-favorites)
+[![OpenSSF Best Practices: not enrolled](https://img.shields.io/badge/OpenSSF%20Best%20Practices-not%20enrolled-lightgrey)](https://www.bestpractices.dev/)
+
+`finder-favorites` keeps selected folders in the macOS Finder Favorites sidebar
+from a JSON configuration. It works with Home Manager or as a standalone command.
+
+## Install
+
+On Apple silicon with macOS 14 or newer and Nix:
+
+```console
+nix profile install github:IanHollow/finder-favorites
+```
+
+The package is also available from
+[`nixpkgs-personal`](https://github.com/nix-forge/nixpkgs-personal).
+The [source releases](https://github.com/IanHollow/finder-favorites/releases)
+contain versioned source archives, not a prebuilt executable.
+
+## Quick start
+
+Save the configuration below as `favorites.json`, replacing the example path
+with a folder on your Mac. Preview changes before applying them:
+
+```console
+finder-favorites plan --config favorites.json
+finder-favorites apply --config favorites.json
+```
+
+`apply` adds configured favorites without removing entries you manage in Finder.
+Use `finder-favorites recover` if an interrupted write leaves a pending journal.
+
+## Configuration format
+
+```json
+{
+  "schemaVersion": 1,
+  "placement": "bottom",
+  "entries": [
+    {
+      "id": "downloads",
+      "label": "Downloads",
+      "path": "/Users/example/Downloads",
+      "onMissing": "error"
+    }
+  ]
+}
+```
+
+`onMissing` accepts `error`, `skip`, or `createDirectory`. Configuration is
+limited to 1 MiB and 256 entries. IDs and canonical paths must be unique;
+labels may repeat.
+
+## How it works
 
 Apple does not provide a supported API for programmatically managing Finder
 Favorites. This tool uses the deprecated `LSSharedFileList` API because it is
@@ -26,27 +78,6 @@ recovery code remain independently testable.
 Finder itself can still change the sidebar concurrently. If that happens,
 rerun `apply`. If a process is terminated during a write, run `recover` before
 the next apply.
-
-## Configuration
-
-```json
-{
-  "schemaVersion": 1,
-  "placement": "bottom",
-  "entries": [
-    {
-      "id": "downloads",
-      "label": "Downloads",
-      "path": "/Users/example/Downloads",
-      "onMissing": "error"
-    }
-  ]
-}
-```
-
-`onMissing` accepts `error`, `skip`, or `createDirectory`. Configuration is
-limited to 1 MiB and 256 entries. IDs and canonical paths must be unique;
-labels may repeat.
 
 ## Commands
 
@@ -105,14 +136,10 @@ run `nix develop --command bash Scripts/check-quality.sh` and
 
 ## Project health
 
-[![CI](https://github.com/IanHollow/finder-favorites/actions/workflows/ci.yml/badge.svg)](https://github.com/IanHollow/finder-favorites/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/IanHollow/finder-favorites/actions/workflows/codeql.yml/badge.svg)](https://github.com/IanHollow/finder-favorites/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IanHollow/finder-favorites/badge)](https://scorecard.dev/viewer/?uri=github.com/IanHollow/finder-favorites)
-
 Security and release expectations are documented in [SECURITY.md](SECURITY.md),
 [SUPPORT.md](SUPPORT.md), and [security and release process](docs/security-and-releases.md).
-The [source releases](https://github.com/IanHollow/finder-favorites/releases) provide
-versioned archives, checksums, and provenance. The first release is `v0.1.0`.
-There is no OSPS Baseline level or OpenSSF Best Practices passing
-claim for this repository. SLSA claims, if any, apply only to verified
-release archives, not to Nix builds or the whole repository.
+Releases provide checksums and provenance for the source archives. The first
+release is `v0.1.0`. The gray OpenSSF badges above indicate that this project
+has not been enrolled or assessed by the Best Practices service; they do not
+claim a Baseline level or a passing Best Practices status. SLSA claims, if any,
+apply only to verified release archives, not to Nix builds or the repository.
