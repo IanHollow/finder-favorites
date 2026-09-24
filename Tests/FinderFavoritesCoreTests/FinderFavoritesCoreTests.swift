@@ -130,6 +130,14 @@ final class FinderFavoritesCoreTests: XCTestCase {
     }
   }
 
+  func testOversizedConfigurationIsRejected() throws {
+    try withTemporaryDirectories([]) { root in
+      let configURL = root.appendingPathComponent("config.json")
+      try Data(repeating: 0x20, count: ConfigurationLoader.maximumBytes + 1).write(to: configURL)
+      XCTAssertThrowsError(try ConfigurationLoader.load(from: configURL))
+    }
+  }
+
   func testConcurrentSidebarChangeAbortsBeforeWriting() throws {
     try withTemporaryDirectories(["A", "Other", "External"]) { root in
       let initial = [

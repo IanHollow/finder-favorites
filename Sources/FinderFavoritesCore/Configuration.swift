@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 
 public enum ConfigurationLoader {
@@ -15,7 +16,31 @@ public enum ConfigurationLoader {
       )
     }
 
-    let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+    // Bound the actual read as well as the metadata check. The file can change
+    // between resourceValues and open, including through a symlink replacement.
+    let descriptor = open(url.path, O_RDONLY | O_NONBLOCK | O_CLOEXEC)
+    guard descriptor >= 0 else {
+      throw FinderFavoritesError.invalidConfiguration("could not open \(url.path)")
+    }
+    let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+    defer { try? handle.close() }
+    var information = stat()
+    let status = fstat(handle.fileDescriptor, &information)
+    guard status == 0, information.st_mode & S_IFMT == S_IFREG else {
+      throw FinderFavoritesError.invalidConfiguration("\(url.path) is not a regular file")
+    }
+    var data = Data()
+    while true {
+      let remaining = maximumBytes - data.count
+      let readSize = remaining >= 65_536 ? 65_536 : remaining + 1
+      guard let chunk = try handle.read(upToCount: readSize), !chunk.isEmpty else { break }
+      data.append(chunk)
+      guard data.count <= maximumBytes else {
+        throw FinderFavoritesError.invalidConfiguration(
+          "configuration exceeds the \(maximumBytes)-byte limit"
+        )
+      }
+    }
     try validateKnownKeys(data)
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .useDefaultKeys

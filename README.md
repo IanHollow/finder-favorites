@@ -78,7 +78,9 @@ From this repository on macOS, run the quality suite with:
 Scripts/check-quality.sh
 ```
 
-Install the named quality tools before running the full suite. `swift test` runs the Swift package tests with Xcode alone. The suite checks Swift and C formatting, SwiftLint, strict Swift 5 and Swift 6
+Use `nix develop` to supply the quality tools. `swift test` runs the Swift
+package tests with Xcode alone. The suite checks Swift and C formatting,
+SwiftLint, strict Swift 5 and Swift 6
 compiler modes, complete concurrency checking, Periphery, Clang's full warning
 set, clang-tidy, the Clang Static Analyzer, Nix, Bash, YAML, JSON, Markdown,
 spelling, XCTest, Address Sanitizer, and Thread Sanitizer. Each compiler and
@@ -93,4 +95,10 @@ and runtime sanitizers for every non-live code path.
 
 ## Nix packaging
 
-`package.nix` is the current package recipe. Once this repository has a published immutable revision, `nixpkgs-personal` can fetch it and call that recipe. The repository has no remote yet.
+`package.nix` is the current package recipe. Once this repository has a
+published immutable revision, `nixpkgs-personal` can fetch it and call that
+recipe. The repository has no remote yet.
+
+The repository flake supplies the pinned quality tools. On a supported Mac,
+run `nix develop --command bash Scripts/check-quality.sh` and
+`nix flake check` before submitting a change. CI runs both commands.

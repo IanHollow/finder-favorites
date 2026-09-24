@@ -66,11 +66,13 @@ bash -n Scripts/check-quality.sh
 shellcheck --shell=bash --severity=style Scripts/check-quality.sh
 shfmt -d -i 2 Scripts/check-quality.sh
 
-nixfmt --check package.nix
-statix check package.nix
-deadnix --fail package.nix
-nixf-diagnose package.nix
-nix-instantiate --parse package.nix >/dev/null
+for nix_source in flake.nix package.nix; do
+  nixfmt --check "$nix_source"
+  statix check "$nix_source"
+  deadnix --fail "$nix_source"
+  nixf-diagnose "$nix_source"
+  nix-instantiate --parse "$nix_source" >/dev/null
+done
 
 yamlfmt -lint "${yaml_sources[@]}"
 prettier --check --parser yaml "${clang_yaml_sources[@]}"
@@ -128,7 +130,10 @@ swift build \
   -Xswiftc -swift-version \
   -Xswiftc 6
 
-periphery scan --clean-build --config .periphery.yml
+swift build --scratch-path "$scratch_root/periphery" --enable-index-store
+index_store=$(find "$scratch_root/periphery" -type d -path '*/index/store' -print -quit)
+test -n "$index_store"
+periphery scan --config .periphery.yml --index-store-path "$index_store" --skip-build
 
 if [[ ${FINDER_FAVORITES_RUN_SANITIZERS:-1} == 1 ]]; then
   swift test \
