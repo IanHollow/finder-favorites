@@ -46,7 +46,6 @@ c_flags=(
   -Wno-covered-switch-default
   -Wno-poison-system-directories
   -Wno-declaration-after-statement
-  -Wno-implicit-void-ptr-cast
   -Wno-nullability-extension
   -Wno-padded
   -Wno-unsafe-buffer-usage
