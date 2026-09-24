@@ -41,6 +41,15 @@ public enum ConfigurationLoader {
         )
       }
     }
+    return try decode(data)
+  }
+
+  static func decode(_ data: Data) throws -> FavoritesConfiguration {
+    guard data.count <= maximumBytes else {
+      throw FinderFavoritesError.invalidConfiguration(
+        "configuration exceeds the \(maximumBytes)-byte limit"
+      )
+    }
     try validateKnownKeys(data)
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .useDefaultKeys

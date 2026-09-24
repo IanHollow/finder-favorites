@@ -124,6 +124,11 @@ source annotations cannot be parsed by Swift 5.10. The C boundary remains
 covered by explicit nullability, strict Clang diagnostics, two static analyzers,
 and runtime sanitizers for every non-live code path.
 
+The XCTest suite also runs 1,000 reproducible, bounded JSON mutations against
+the same decoder used for configuration files. Accepted configurations must
+survive an encode/decode round trip. These fuzz smoke cases use a fixed seed
+and do not touch the live Finder sidebar.
+
 ## Nix packaging
 
 `package.nix` is the current package recipe.
