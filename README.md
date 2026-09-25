@@ -1,8 +1,8 @@
 # finder-favorites
 
-[![OpenSSF Baseline: not assessed](https://img.shields.io/badge/OpenSSF%20Baseline-not%20assessed-lightgrey)](https://baseline.openssf.org/)
+[![OpenSSF Baseline](https://www.bestpractices.dev/projects/14827/baseline)](https://www.bestpractices.dev/en/projects/14827/baseline-2)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IanHollow/finder-favorites/badge)](https://scorecard.dev/viewer/?uri=github.com/IanHollow/finder-favorites)
-[![OpenSSF Best Practices: not enrolled](https://img.shields.io/badge/OpenSSF%20Best%20Practices-not%20enrolled-lightgrey)](https://www.bestpractices.dev/)
+[![OpenSSF Developer Best Practices](https://www.bestpractices.dev/projects/14827/badge)](https://www.bestpractices.dev/en/projects/14827/passing)
 
 `finder-favorites` keeps selected folders in the macOS Finder Favorites sidebar
 from a JSON configuration. It works with Home Manager or as a standalone command.
